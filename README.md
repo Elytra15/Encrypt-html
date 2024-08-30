@@ -11,6 +11,8 @@ Functions
  - Generate obfuscated .docx file to avoid the file to be detected
  - Automatic URL detection
 
+   When generating an obfuscated file it will look someting like "Uniform Two Foxtrot Pink Yes Golf Victor Blue Xray One Nine Six Romeo" instead of "U2FsdGVkX196R4nfKPh5Qd0IBf/bDjvjpslNgnBBkXk="
+
 The code is free to use
 
 Test and use the website on https://about.elytra15.com/tools
