@@ -12,3 +12,5 @@ Functions
  - Automatic URL detection
 
 The code is free to use
+
+Test and use the website on https://about.elytra15.com/tools
