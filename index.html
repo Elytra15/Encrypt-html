@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Encrypt and Decrypt Text with QR Code">
+    <meta name="keywords" content="encryption, decryption, text, QR code">
+    <title>Encrypt and Decrypt Tools</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .section {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #fafafa;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            font-size: 28px;
+            color: #735DA5;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .section input[type="password"],
+        .section textarea,
+        .section button,
+        .section input[type="file"] {
+            width: 90%;
+            padding: 14px;
+            margin: 10px;
+            border-radius: 6px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            border: 1px solid #e0e0e0;
+            transition: border-color 0.3s ease;
+        }
+
+        .section input[type="password"]:focus,
+        .section textarea:focus,
+        .section button:focus,
+        .section input[type="file"]:focus {
+            outline: none;
+            border-color: #735DA5;
+        }
+
+        .section textarea {
+            resize: none;
+            height: 160px;
+        }
+
+        .section button {
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #ffffff;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #encryptSection button {
+            background-color: #735DA5;
+        }
+
+        #decryptSection button {
+            background-color: #735DA5;
+        }
+
+        #encryptSection button:hover {
+            background-color: #5f3faa;
+            transform: translateY(-2px);
+        }
+
+        #decryptSection button:hover {
+            background-color: #5f3faa;
+            transform: translateY(-2px);
+        }
+
+        .qr-container {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .qr-container button {
+            background-color: #343a40;
+            color: #ffffff;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .qr-container button:hover {
+            background-color: #23272b;
+            transform: translateY(-2px);
+        }
+
+        #qrcode {
+            display: none;
+            margin: 20px auto;
+        }
+
+        #urlDisplay {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #urlDisplay p {
+            font-size: 16px;
+            color: #007bff;
+            margin: 10px 0;
+        }
+
+        #urlButton {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #urlButton:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .copied {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+
+        .copied:hover {
+            background-color: #218838;
+        }
+
+        .support-email {
+            text-align: center;
+            margin-top: auto;
+            padding: 15px;
+            font-size: 14px;
+            width: 100%;
+            background-color: #f0f4f8;
+        }
+
+        .support-email a {
+            color: #735DA5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .support-email a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        #downloadButton {
+            display: none;
+        }
+        #downloaddocxButton {
+            display: none;
+        }
+
+        #encryptedInput {
+            display: block;
+        }
+
+        .button-note {
+    display: block;
+    font-size: 12px; 
+    color: #c0c0c0; 
+    margin-top: 4px; 
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="encryptSection" class="section">
+            <h2>Encrypt Text</h2>
+            <textarea id="plaintext" placeholder="Enter your text here"></textarea>
+            <input type="password" id="password" placeholder="Enter your password">
+            <button id="encryptButton" onclick="encryptText()">
+                <i class="fas fa-lock"></i> Encrypt
+            </button>
+            <textarea id="encryptedText" placeholder="Encrypted text will appear here" readonly></textarea>
+            <div class="qr-container" id="qrContainer">
+
+               
+                <button id="showQRCodeButton" onclick="toggleQRCode()">
+                    <i class="fas fa-qrcode"></i> Show QR Code
+                </button>
+                <div id="qrcode"></div>
+                <button id="urlButton" onclick="copyURL()">
+                    <i class="fas fa-link"></i> Copy URL
+                </button>
+
+                
+            </div>
+
+            <button id="downloaddocxButton" onclick="downloaddocxFile()">
+                Download Obfuscated .docx File
+                <br>
+                <span class="button-note">Less detectable as crypted data<br>(Replaces leters with words)</span>
+            </button>
+
+            <button id="downloadButton" onclick="downloadFile()">
+                Download .bericrypt File
+                <br>
+                <span class="button-note">More compact size<br>(5-6x more compact than docx)</span>
+            </button>
+            
+        </div>
+
+        <div id="decryptSection" class="section">
+            <h2>Decrypt Text</h2>
+            <input type="file" id="fileUpload" accept=".bericrypt,.docx" onchange="handleFileUpload(event)">
+            <textarea id="encryptedInput" placeholder="Enter encrypted text here"></textarea>
+            <input type="password" id="decryptPassword" placeholder="Enter your password">
+            <button id="decryptButton" onclick="decryptText()">
+                <i class="fas fa-unlock"></i> Decrypt
+            </button>
+            <textarea id="decryptedText" placeholder="Decrypted text will appear here" readonly></textarea>
+            <div id="urlDisplay">
+                <p id="urlText"></p>
+                <button id="confirmURLButton" onclick="confirmURL()">Go to URL</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="support-email">
+        <p>V1.0</p>
+        <p>My contact info: <a href="https://about.elytra15.com/contact">/Contact</a></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        
+        const obfuscationMap = {
+            'a': 'Hi', 'b': 'You', 'c': 'Next', 'd': 'Yes', 'e': 'Always', 'f': 'Forever',
+            'g': 'Sun', 'h': 'Moon', 'i': 'Star', 'j': 'Sky', 'k': 'Blue', 'l': 'Green',
+            'm': 'Red', 'n': 'Yellow', 'o': 'White', 'p': 'Black', 'q': 'Brown', 'r': 'Purple',
+            's': 'Pink', 't': 'Orange', 'u': 'Gray', 'v': 'Violet', 'w': 'Indigo', 'x': 'Gold',
+            'y': 'Silver', 'z': 'End',
+            'A': 'Alpha', 'B': 'Bravo', 'C': 'Charlie', 'D': 'Delta', 'E': 'Echo', 'F': 'Foxtrot',
+            'G': 'Golf', 'H': 'Hotel', 'I': 'India', 'J': 'Juliet', 'K': 'Kilo', 'L': 'Lima',
+            'M': 'Mike', 'N': 'November', 'O': 'Oscar', 'P': 'Papa', 'Q': 'Quebec', 'R': 'Romeo',
+            'S': 'Sierra', 'T': 'Tango', 'U': 'Uniform', 'V': 'Victor', 'W': 'Whiskey', 'X': 'Xray',
+            'Y': 'Yankee', 'Z': 'Zulu',
+            '0': 'Zero', '1': 'One', '2': 'Two', '3': 'Three', '4': 'Four', '5': 'Five',
+            '6': 'Six', '7': 'Seven', '8': 'Eight', '9': 'Nine',
+            '+': 'Plus', '/': 'Slash', '=': 'Equals'
+        };
+    
+        const reverseObfuscationMap = Object.fromEntries(
+            Object.entries(obfuscationMap).map(([key, value]) => [value, key])
+        );
+    
+        function obfuscateText(encryptedText) {
+            return encryptedText.split('').map(char => obfuscationMap[char] || char).join(' ');
+        }
+    
+        function deobfuscateText(obfuscatedText) {
+            return obfuscatedText.split(' ').map(word => reverseObfuscationMap[word] || word).join('');
+        }
+    
+        function downloaddocxFile() {
+            var encryptedText = document.getElementById("encryptedText").value;
+            if (!encryptedText) {
+                alert("No encrypted text to download");
+                return;
+            }
+    
+            var obfuscatedText = obfuscateText(encryptedText);
+            var blob = new Blob([obfuscatedText], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'Work.docx';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    
+        function handledocxFileUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+    
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var obfuscatedText = e.target.result;
+                var decryptedText = deobfuscateText(obfuscatedText);
+                document.getElementById('encryptedInput').value = decryptedText;
+                document.getElementById('encryptedInput').style.display = "none"; 
+            };
+            reader.readAsText(file);
+        }
+    
+        
+        document.getElementById('fileUpload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file.name.endsWith('.docx')) {
+                handledocxFileUpload(event);
+            } else {
+                handleFileUpload(event);
+            }
+        });
+    </script>
+    
+    
+    <script>
+        window.onload = function() {
+            function getQueryParameter(name) {
+                var urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            var encryptedText = getQueryParameter('encryptedText');
+            if (encryptedText) {
+                document.getElementById('encryptedInput').value = encryptedText;
+            }
+        }
+
+        function encryptText() {
+            var plaintext = document.getElementById("plaintext").value;
+            var password = document.getElementById("password").value;
+
+            if (plaintext === "" || password === "") {
+                alert("Please enter both text and password!");
+                return;
+            }
+
+            var encrypted = CryptoJS.AES.encrypt(plaintext, password).toString();
+            document.getElementById("encryptedText").value = encrypted;
+
+            if (encrypted.length <= 800) {
+                document.getElementById("qrContainer").style.display = "block";
+                document.getElementById("urlButton").style.display = "block";
+                generateQRCode(encrypted);
+            } else {
+                document.getElementById("qrContainer").style.display = "none";
+                document.getElementById("urlButton").style.display = "none";
+            }
+            
+            document.getElementById("downloadButton").style.display = "block";
+            document.getElementById("downloaddocxButton").style.display = "block";
+            document.getElementById("urlDisplay").style.display = "none";
+        }
+
+        function decryptText() {
+            var encryptedText = document.getElementById("encryptedInput").value;
+            var password = document.getElementById("decryptPassword").value;
+
+            if (encryptedText === "" || password === "") {
+                alert("Please enter both encrypted text and password!");
+                return;
+            }
+
+            try {
+                var decrypted = CryptoJS.AES.decrypt(encryptedText, password);
+                var plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+
+                if (!plaintext) {
+                    throw new Error("Invalid password or corrupted data");
+                }
+
+                document.getElementById("decryptedText").value = plaintext;
+
+                if (isValidURL(plaintext)) {
+                    document.getElementById("urlText").textContent = plaintext;
+                    document.getElementById("urlDisplay").style.display = "block";
+                } else {
+                    document.getElementById("urlDisplay").style.display = "none";
+                }
+            } catch (error) {
+                alert("Decryption failed: " + error.message);
+                document.getElementById("decryptedText").value = "";
+                document.getElementById("urlDisplay").style.display = "none";
+            }
+        }
+
+        function isValidURL(urlString) {
+            try {
+                new URL(urlString);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function generateQRCode(encryptedText) {
+            var url = "https://about.elytra15.com/toolsurl?encryptedText=" + encodeURIComponent(encryptedText);
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: url,
+                width: 256,
+                height: 256
+            });
+            document.getElementById("urlButton").dataset.url = url;
+        }
+
+        function toggleQRCode() {
+            var qrcodeElement = document.getElementById("qrcode");
+            var button = document.getElementById("showQRCodeButton");
+
+            if (qrcodeElement.style.display === "none" || qrcodeElement.style.display === "") {
+                qrcodeElement.style.display = "block";
+                button.innerHTML = '<i class="fas fa-qrcode"></i> Hide QR Code';
+            } else {
+                qrcodeElement.style.display = "none";
+                button.innerHTML = '<i class="fas fa-qrcode"></i> Show QR Code';
+            }
+        }
+
+        function copyURL() {
+            var url = document.getElementById("urlButton").dataset.url;
+            navigator.clipboard.writeText(url).then(function() {
+                var button = document.getElementById("urlButton");
+                button.textContent = "Copied";
+                button.classList.add("copied");
+                setTimeout(function() {
+                    button.textContent = "Copy URL";
+                    button.classList.remove("copied");
+                }, 2000);
+            }, function(err) {
+                console.error("Failed to copy URL: " + err);
+            });
+        }
+
+        function confirmURL() {
+            var url = document.getElementById("urlText").textContent;
+            if (url && confirm("Do you want to visit this URL?")) {
+                window.location.href = url;
+            }
+        }
+
+        function handleFileUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var fileContent = e.target.result;
+
+
+        if (file.name.endsWith('.bericrypt')) {
+            var [header, encryptedText, footer] = fileContent.split('---');
+            if (header === 'START' && footer === 'END') {
+                document.getElementById('encryptedInput').value = encryptedText;
+                document.getElementById('encryptedInput').style.display = "none";
+            } else {
+                alert('Invalid .bericrypt file format');
+            }
+        }
+
+        else if (file.name.endsWith('.docx')) {
+            var decryptedText = deobfuscateText(fileContent);
+            document.getElementById('encryptedInput').value = decryptedText;
+            document.getElementById('encryptedInput').style.display = "none";
+        } else {
+            alert('Unsupported file format');
+        }
+    };
+    reader.readAsText(file);
+}
+
+
+        function downloadFile() {
+            var encryptedText = document.getElementById("encryptedText").value;
+            if (!encryptedText) {
+                alert("No encrypted text to download");
+                return;
+            }
+
+            var content = `START---${encryptedText}---END`;
+            var blob = new Blob([content], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'Data.bericrypt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
